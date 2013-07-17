@@ -1,0 +1,7 @@
+[Global]
+time_delta_minutes = 1000 
+
+[Pushover]
+appkey = <your appkey>
+userkey = <your userkey>
+#device
