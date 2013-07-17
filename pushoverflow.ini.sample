@@ -1,7 +1,11 @@
 [Global]
-time_delta_minutes = 1000 
+time_delta_minutes = 10000 
 
 [Pushover]
 appkey = <your appkey>
 userkey = <your userkey>
 #device
+
+[scifi]
+tags = star-trek, star-trek-tng
+exclude = star-wars
