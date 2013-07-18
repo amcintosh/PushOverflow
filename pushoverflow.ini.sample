@@ -1,11 +1,23 @@
 [Global]
-time_delta_minutes = 10000 
+time_delta_minutes = 60
 
 [Pushover]
 appkey = <your appkey>
 userkey = <your userkey>
-#device
+#Priority 0 is normal. -1 will not trigger sound or vibration. 1 will bypass quiet hours.
+priority = 0
+#device = 
+
+[stackoverflow]
+#show me new python questions on stackoverflow, but nothing python-2.7
+tags = python
+exclude = python-2.7
 
 [scifi]
-tags = star-trek, star-trek-tng
-exclude = star-wars
+#show me new star trek questions on scifi.stackexchange.com, but not any about DS9 or aliens
+tags = star-trek
+exclude = star-trek-ds9, aliens
+
+[boardgames]
+#show me all new questions on boardgames.stackexchange.com
+tags =
