@@ -14,19 +14,21 @@ $ pip install requests
 
 ### Setup
 
-Copy and rename `pushoverflow.ini.sample` to `pushoverflow.ini` and edit the configuration for the StackExchange sites you would like notifications from and which tags specifically (if any) and which tags to exclude (if any).
+- Copy and rename `pushoverflow.ini.sample` to `pushoverflow.ini` and edit the configuration for the StackExchange sites you would like notifications from and which tags specifically (if any) and which tags to exclude (if any).
 
-Each configuration section will check a specific StackExchange site. For instance `[scifi]` will check for new questions in http://scifi.stackexchange.com/ (Science Fiction & Fantasy).
+  Each configuration section will check a specific StackExchange site. For instance `[scifi]` will check for new questions in http://scifi.stackexchange.com/ (Science Fiction & Fantasy).
 
-Set `time_delta_minutes` to the number of minutes you would like between each check.
+- You will need to specify your Pushover user key in the configuration (in `userkey`), as well as [register an application](https://pushover.net/api#registration) with Pushover and specify the application's API token (in `appkey`).
 
-Setup a cron job (`crontab -e`) to run `pushoverflow.py` with the same frequency as `time_delta_minutes`.
+- Set `time_delta_minutes` to the number of minutes you would like between each check.
 
-Eg. For `time_delta_minutes = 20`:
+- Setup a cron job (`crontab -e`) to run `pushoverflow.py` with the same frequency as `time_delta_minutes`.
 
-```
-*/20 * * * * /path/to/pushoverflow.py
-```
+  Eg. For `time_delta_minutes = 20`:
+
+  ```
+  */20 * * * * /path/to/pushoverflow.py
+  ```
 
 ### Todo
 
