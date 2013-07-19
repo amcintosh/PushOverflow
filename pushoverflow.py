@@ -3,6 +3,7 @@
 import sys
 import configparser
 import requests
+import time
 from datetime import datetime, timedelta
 
 __version__ = "0.1"
@@ -51,7 +52,7 @@ def get_stack_exchange_questions(stack_exchange_site, from_date):
        provided time.
     '''
     stack_url = STACK_EXCHANGE_BASE_URL + "/questions"
-    payload = { "fromdate": int(from_date.timestamp()), 
+    payload = { "fromdate": int(time.mktime(from_date.timetuple())), 
                 "site": stack_exchange_site}
     #print("payload:",payload)
     res = requests.get(stack_url, params=payload)
