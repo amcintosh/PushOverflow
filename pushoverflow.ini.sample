@@ -6,6 +6,7 @@ appkey = <your appkey>
 userkey = <your userkey>
 #Priority 0 is normal. -1 will not trigger sound or vibration. 1 will bypass quiet hours.
 priority = 0
+#device name if you want notifications to go to a specific device
 #device = 
 
 [stackoverflow]
