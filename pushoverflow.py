@@ -97,7 +97,7 @@ def main(argv):
     from_date = None
     try:
         time_delta = int(config.get("Global","time_delta_minutes"))
-        from_date = datetime.utcnow() - timedelta(minutes=time_delta)
+        from_date = datetime.now() - timedelta(minutes=time_delta)
     except configparser.NoOptionError as err:
         print ("Missing properties in configuration file:", err)
         return

@@ -14,7 +14,7 @@ $ pip install requests
 
 ### Setup
 
-- Copy and rename `pushoverflow.ini.sample` to `pushoverflow.ini` and edit the configuration for the StackExchange sites you would like notifications from and which tags specifically (if any) and which tags to exclude (if any).
+- Copy and rename `pushoverflow.ini.sample` to `pushoverflow.ini` and edit the configuration for the StackExchange sites you would like notifications. `tags` allows you to filter questions with one of those tags (comma separated tags treated as boolean OR). `exclude` will filter out questions with any oof those tags. Both are optional.
 
   Each configuration section will check a specific StackExchange site. For instance `[scifi]` will check for new questions in http://scifi.stackexchange.com/ (Science Fiction & Fantasy).
 
@@ -27,11 +27,13 @@ $ pip install requests
   Eg. For `time_delta_minutes = 20`:
 
   ```
-  */20 * * * * /path/to/pushoverflow.py
+  */20 * * * * cd /path/to/pushoverflow && ./pushoverflow.py
   ```
 
 ### Todo
 
 - Some code cleanup
+- Allow boolean AND of multiple tags
+- Optional logging for debug
 - Look into more Pushover options
 - Option to specify a config file at runtime
