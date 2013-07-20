@@ -5,7 +5,7 @@ Send Pushover notifications of new questions posted to StackExchange
 
 ### Installation and Requirements
 
-PushOverflow has been written for Python 3 (tested on Python3.2+ on Ubuntu). 
+PushOverflow has been written for Python (tested on Python3.2+ on Ubuntu). 
 
 Requires [Requests](http://docs.python-requests.org/en/latest/). Installation instructions are [here](http://docs.python-requests.org/en/latest/user/install.html#install), but in short:
 ```

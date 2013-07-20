@@ -1,5 +1,6 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 
+from __future__ import absolute_import, division, print_function, unicode_literals
 import sys
 import configparser
 import requests
