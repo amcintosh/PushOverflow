@@ -1,15 +1,15 @@
 #!/usr/bin/python
 
 from __future__ import absolute_import, division, print_function, unicode_literals
-import sys
 import configparser
 import requests
+import argparse
 import time
 from datetime import datetime, timedelta
 
-__version__ = "0.1"
+__version__ = "0.2"
 __date__ = "2013/16/07"
-__updated__ = "2013/16/07"
+__updated__ = "2013/20/07"
 __author__ = "Andrew McIntosh (github.com/amcintosh)"
 __copyright__ = "Copyright 2013, Andrew McIntosh"
 __license__ = "GPL"
@@ -31,6 +31,7 @@ def send_to_pushover(pushover_config, title, message, url=None):
     requests.post(PUSHOVER_BASE_URL, data=payload)
     #print("Push run: ", payload)	
 
+
 def send_questions_to_pushover(pushover_config, exchange, questions):
     '''Send notification of new StackExchange questions to Pushover.
   	   Title will contain the exchange name and message will contain
@@ -48,6 +49,7 @@ def send_questions_to_pushover(pushover_config, exchange, questions):
             + ".stackexchange.com/questions?sort=newest")
     send_to_pushover(pushover_config, title, message, url)
 
+
 def get_stack_exchange_questions(stack_exchange_site, from_date):
     '''Get new questions posted to stackexchange site since the 
        provided time.
@@ -58,6 +60,7 @@ def get_stack_exchange_questions(stack_exchange_site, from_date):
     #print("payload:",payload)
     res = requests.get(stack_url, params=payload)
     return res.json()	
+
 
 def filter_questions(questions, tags, excluded):
     '''Takes a list of questions and filters them.
@@ -91,10 +94,32 @@ def check_exchange(exchange, from_date):
     questions = get_stack_exchange_questions(exchange.name, from_date)
     questions = filter_questions(questions, tags, excluded)
     return questions
-		
-def main(argv):
+	
+	
+def main():
+    '''Parse arguments, configuration file, loop through exchanges.'''
+    parser = argparse.ArgumentParser(
+               description="Check for new StackExchange questions and notify "
+                           "via Pushover")
+    parser.add_argument("config", 
+                        metavar="config_file", 
+                        nargs="?", 
+                        default="pushoverflow.ini", 
+                        help="Configuration file (defaults to "
+                             "'./pushoverflow.ini')")
+    parser.add_argument("-v", "--verbose", 
+                        dest="log_file", 
+                        action="store", 
+                        const=".pushoverflow.log", 
+                        nargs="?", 
+                        help="enable logging for debug (logs to "
+                             "'./.pushoverflow.log')")
+    parser.add_argument('--version', action='version', version=__version__)
+    args = parser.parse_args()
+    #print(args)	
+
     config = configparser.ConfigParser()
-    config.read('pushoverflow.ini')
+    config.read(args.config)
     from_date = None
     try:
         time_delta = int(config.get("Global","time_delta_minutes"))
@@ -116,4 +141,4 @@ def main(argv):
 
 	
 if __name__ == "__main__":
-    main(sys.argv)
+    main()
