@@ -36,4 +36,3 @@ $ pip install requests
 - Allow boolean AND of multiple tags
 - Optional logging for debug
 - Look into more Pushover options
-- Option to specify a config file at runtime

@@ -1,9 +1,10 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 import configparser
 import requests
 import argparse
+import logging
 import time
 from datetime import datetime, timedelta
 
@@ -16,6 +17,7 @@ __license__ = "GPL"
 
 STACK_EXCHANGE_BASE_URL = "http://api.stackexchange.com/2.1"
 PUSHOVER_BASE_URL = "https://api.pushover.net/1/messages.json"
+LOGGER = None
 
 def send_to_pushover(pushover_config, title, message, url=None):
     '''Send notification to Pushover'''
@@ -57,8 +59,11 @@ def get_stack_exchange_questions(stack_exchange_site, from_date):
     stack_url = STACK_EXCHANGE_BASE_URL + "/questions"
     payload = { "fromdate": int(time.mktime(from_date.timetuple())), 
                 "site": stack_exchange_site}
-    #print("payload:",payload)
     res = requests.get(stack_url, params=payload)
+    if res.status_code != requests.codes.ok:
+        if LOGGER:
+            LOGGER.warn(res.text)
+        return {}
     return res.json()	
 
 
@@ -91,8 +96,14 @@ def check_exchange(exchange, from_date):
         tags = [x.strip() for x in exchange.get("tags").split(",")]
     if exchange.get("exclude"):
         excluded = [x.strip() for x in exchange.get("exclude").split(",")]
+    if LOGGER:
+        LOGGER.info("check_exchange: [%r], from_date: %r", 
+                    exchange.name, from_date)
+        LOGGER.debug("tags: %r, excluded %r", tags, excluded)
+
     questions = get_stack_exchange_questions(exchange.name, from_date)
-    questions = filter_questions(questions, tags, excluded)
+    if questions:
+        questions = filter_questions(questions, tags, excluded)
     return questions
 	
 	
@@ -118,8 +129,16 @@ def main():
     args = parser.parse_args()
     #print(args)	
 
+    if (args.log_file):
+        logging.basicConfig(#filename=args.log_file, 
+                            format='%(asctime)s - %(levelname)s: %(message)s')
+        global LOGGER
+        LOGGER = logging.getLogger(__name__)
+        LOGGER.setLevel(logging.DEBUG)
+
     config = configparser.ConfigParser()
     config.read(args.config)
+
     from_date = None
     try:
         time_delta = int(config.get("Global","time_delta_minutes"))
