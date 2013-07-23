@@ -34,5 +34,4 @@ $ pip install requests
 
 - Some code cleanup
 - Allow boolean AND of multiple tags
-- Optional logging for debug
 - Look into more Pushover options

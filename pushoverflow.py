@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 import configparser
@@ -19,7 +19,7 @@ STACK_EXCHANGE_BASE_URL = "http://api.stackexchange.com/2.1"
 PUSHOVER_BASE_URL = "https://api.pushover.net/1/messages.json"
 LOGGER = None
 
-def send_to_pushover(pushover_config, title, message, url=None):
+def send_to_pushover(pushover_config, title, message, url=None, url_title=None):
     '''Send notification to Pushover'''
     payload = { "title": title, "message": message }
     payload["token"] = pushover_config.get("appkey")
@@ -29,9 +29,14 @@ def send_to_pushover(pushover_config, title, message, url=None):
         payload["device"] = pushover_config.get("device")
     if url:
         payload["url"] = url
+        payload["url_title"] = url_title
     
-    requests.post(PUSHOVER_BASE_URL, data=payload)
-    #print("Push run: ", payload)	
+    res = requests.post(PUSHOVER_BASE_URL, data=payload)
+    if LOGGER and res.status_code == requests.codes.ok:
+        LOGGER.debug("Sent to Pushover: %r", payload)
+    elif LOGGER:
+        LOGGER.warn("Failed to send to Pushover: %r", res.text)
+
 
 
 def send_questions_to_pushover(pushover_config, exchange, questions):
@@ -45,11 +50,13 @@ def send_questions_to_pushover(pushover_config, exchange, questions):
         message = ("New question posted: " 
                 + questions[0].get("title"))
         url = questions[0].get("link")
+        url_title = "Open question"
     else:
         message = str(len(questions)) + " new questions posted."
         url = ("http://" + exchange.name 
             + ".stackexchange.com/questions?sort=newest")
-    send_to_pushover(pushover_config, title, message, url)
+        url_title = "Open " + exchange.name + ".stackexchange.com"
+    send_to_pushover(pushover_config, title, message, url, url_title)
 
 
 def get_stack_exchange_questions(stack_exchange_site, from_date):
@@ -62,7 +69,7 @@ def get_stack_exchange_questions(stack_exchange_site, from_date):
     res = requests.get(stack_url, params=payload)
     if res.status_code != requests.codes.ok:
         if LOGGER:
-            LOGGER.warn(res.text)
+            LOGGER.warn("Failed to retrieve from StackExchange: %r", res.text)
         return {}
     return res.json()	
 
@@ -84,6 +91,12 @@ def filter_questions(questions, tags, excluded):
                 in_excluded = True
         if in_tags and not in_excluded:
             filtered_questions.append(question)
+            if LOGGER:
+                LOGGER.debug("Found question: '%r'", question.get("title"))
+        elif LOGGER:
+            LOGGER.debug("Filtered question: '%r', with tags: %r",
+                         question.get("title"), question_tags)
+
     return filtered_questions
 
 	
@@ -98,9 +111,8 @@ def check_exchange(exchange, from_date):
         excluded = [x.strip() for x in exchange.get("exclude").split(",")]
     if LOGGER:
         LOGGER.info("check_exchange: [%r], from_date: %r", 
-                    exchange.name, from_date)
-        LOGGER.debug("tags: %r, excluded %r", tags, excluded)
-
+                    exchange.name, from_date.isoformat())
+ 
     questions = get_stack_exchange_questions(exchange.name, from_date)
     if questions:
         questions = filter_questions(questions, tags, excluded)
@@ -127,10 +139,9 @@ def main():
                              "'./.pushoverflow.log')")
     parser.add_argument('--version', action='version', version=__version__)
     args = parser.parse_args()
-    #print(args)	
 
     if (args.log_file):
-        logging.basicConfig(#filename=args.log_file, 
+        logging.basicConfig(filename=args.log_file, 
                             format='%(asctime)s - %(levelname)s: %(message)s')
         global LOGGER
         LOGGER = logging.getLogger(__name__)
