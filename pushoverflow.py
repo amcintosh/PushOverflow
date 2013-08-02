@@ -7,7 +7,10 @@ import argparse
 import logging
 import time
 from datetime import datetime, timedelta
-from HTMLParser import HTMLParser
+try:
+    from html.parser import HTMLParser
+except ImportError:
+    from HTMLParser import HTMLParser
 
 __version__ = "0.3"
 __date__ = "2013/16/07"
