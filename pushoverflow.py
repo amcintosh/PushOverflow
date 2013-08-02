@@ -7,10 +7,11 @@ import argparse
 import logging
 import time
 from datetime import datetime, timedelta
+from HTMLParser import HTMLParser
 
-__version__ = "0.2"
+__version__ = "0.3"
 __date__ = "2013/16/07"
-__updated__ = "2013/20/07"
+__updated__ = "2013/02/08"
 __author__ = "Andrew McIntosh (github.com/amcintosh)"
 __copyright__ = "Copyright 2013, Andrew McIntosh"
 __license__ = "GPL"
@@ -33,9 +34,9 @@ def send_to_pushover(pushover_config, title, message, url=None, url_title=None):
     
     res = requests.post(PUSHOVER_BASE_URL, data=payload)
     if LOGGER and res.status_code == requests.codes.ok:
-        LOGGER.debug("Sent to Pushover: %r", payload)
+        LOGGER.debug("Sent to Pushover: %s", payload)
     elif LOGGER:
-        LOGGER.warn("Failed to send to Pushover: %r", res.text)
+        LOGGER.warn("Failed to send to Pushover: %s", res.text)
 
 
 
@@ -48,7 +49,7 @@ def send_questions_to_pushover(pushover_config, exchange, questions):
     title = "PushOverflow: " + exchange.name
     if len(questions)==1:
         message = ("New question posted: " 
-                + questions[0].get("title"))
+                + HTMLParser().unescape(questions[0].get("title")))
         url = questions[0].get("link")
         url_title = "Open question"
     else:
@@ -69,7 +70,7 @@ def get_stack_exchange_questions(stack_exchange_site, from_date):
     res = requests.get(stack_url, params=payload)
     if res.status_code != requests.codes.ok:
         if LOGGER:
-            LOGGER.warn("Failed to retrieve from StackExchange: %r", res.text)
+            LOGGER.warn("Failed to retrieve from StackExchange: %s", res.text)
         return {}
     return res.json()	
 
@@ -92,9 +93,9 @@ def filter_questions(questions, tags, excluded):
         if in_tags and not in_excluded:
             filtered_questions.append(question)
             if LOGGER:
-                LOGGER.debug("Found question: '%r'", question.get("title"))
+                LOGGER.debug("Found question: '%s'", question.get("title"))
         elif LOGGER:
-            LOGGER.debug("Filtered question: '%r', with tags: %r",
+            LOGGER.debug("Filtered question: '%s', with tags: %s",
                          question.get("title"), question_tags)
 
     return filtered_questions
@@ -110,7 +111,7 @@ def check_exchange(exchange, from_date):
     if exchange.get("exclude"):
         excluded = [x.strip() for x in exchange.get("exclude").split(",")]
     if LOGGER:
-        LOGGER.info("check_exchange: [%r], from_date: %r", 
+        LOGGER.info("check_exchange: [%s], from_date: %s", 
                     exchange.name, from_date.isoformat())
  
     questions = get_stack_exchange_questions(exchange.name, from_date)
