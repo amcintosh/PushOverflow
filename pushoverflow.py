@@ -17,7 +17,7 @@ __date__ = "2013/16/07"
 __updated__ = "2013/02/08"
 __author__ = "Andrew McIntosh (github.com/amcintosh)"
 __copyright__ = "Copyright 2013, Andrew McIntosh"
-__license__ = "GPL"
+__license__ = "MIT"
 
 STACK_EXCHANGE_BASE_URL = "http://api.stackexchange.com/2.1"
 PUSHOVER_BASE_URL = "https://api.pushover.net/1/messages.json"
