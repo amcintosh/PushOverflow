@@ -1,0 +1,27 @@
+from setuptools import setup, find_packages
+import sys
+import pushoverflow
+
+if sys.version_info[0] == 2:
+    requirements = "requirements27.txt"
+else:
+    requirements = "requirements.txt"
+
+setup(
+    name="pushoverflow",
+    version=pushoverflow.__version__,
+    author="Andrew McIntosh",
+    author_email="andrew@amcintosh.net",
+    description="Pushover Notifications for Stackexchange Sites",
+    url="https://github.com/amcintosh/PushOverflow",
+    license="MIT",
+    packages=find_packages(exclude=["*.test", "*.test.*"]),
+    include_package_data=True,
+    install_requires=open(requirements).readlines(),
+    entry_points={
+        "console_scripts": [
+            "pushoverflow=pushoverflow.cli:main"
+        ]
+    },
+    test_suite="nose.collector"
+)

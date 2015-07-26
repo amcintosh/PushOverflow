@@ -1,0 +1,6 @@
+__version__ = "0.4"
+__date__ = "2013/25/07"
+__updated__ = "2015/02/08"
+__author__ = "Andrew McIntosh (github.com/amcintosh)"
+__copyright__ = "Copyright 2015, Andrew McIntosh"
+__license__ = "MIT"

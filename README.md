@@ -5,16 +5,18 @@ Send Pushover notifications of new questions posted to StackExchange
 
 ### Installation and Requirements
 
-PushOverflow has been written for Python (tested on Python3.2+ on Ubuntu). 
+PushOverflow has been written for Python (tested with Travis CI on 2.* and 3.*, and I personally run it with Python3.2 on Ubuntu). 
 
-Requires [Requests](http://docs.python-requests.org/en/latest/). Installation instructions are [here](http://docs.python-requests.org/en/latest/user/install.html#install), but in short:
+To install:
 ```
-$ pip install requests
+$ python setup.py install
 ```
 
 ### Setup
 
-- Copy and rename `pushoverflow.ini.sample` to `pushoverflow.ini` and edit the configuration for the StackExchange sites you would like notifications. `tags` allows you to filter questions with one of those tags (comma separated tags treated as boolean OR). `exclude` will filter out questions with any oof those tags. Both are optional.
+- Copy and rename `pushoverflow.ini.sample` to `pushoverflow.ini`. By default PushOverflow will look for the file in the current directory (eg. `./pushoverflow.ini`) or you can specify the path at runtime (eg. `pushoverflow /path/to/pushoverflow.ini`). 
+
+- Edit the configuration for the StackExchange sites you would like notifications. `tags` allows you to filter questions with one of those tags (comma separated tags treated as boolean OR). `exclude` will filter out questions with any oof those tags. Both are optional.
 
   Each configuration section will check a specific StackExchange site. For instance `[scifi]` will check for new questions in http://scifi.stackexchange.com/ (Science Fiction & Fantasy).
 
@@ -27,11 +29,15 @@ $ pip install requests
   Eg. For `time_delta_minutes = 20`:
 
   ```
-  */20 * * * * cd /path/to/pushoverflow && ./pushoverflow.py
+  */20 * * * * pushoverflow /path/to/config_file
+  ```
+or
+  ```
+  */20 * * * * cd /path/to/config_directory && pushoverflow
   ```
 
 ### Todo
 
 - Some code cleanup
 - Allow boolean AND of multiple tags
-- Look into more Pushover options
+- More granular priority settings

@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 from __future__ import absolute_import, division, print_function, unicode_literals
 import configparser
 import requests
@@ -11,13 +9,8 @@ try:
     from html.parser import HTMLParser
 except ImportError:
     from HTMLParser import HTMLParser
+from pushoverflow import __version__
 
-__version__ = "0.3"
-__date__ = "2013/16/07"
-__updated__ = "2013/02/08"
-__author__ = "Andrew McIntosh (github.com/amcintosh)"
-__copyright__ = "Copyright 2013, Andrew McIntosh"
-__license__ = "MIT"
 
 STACK_EXCHANGE_BASE_URL = "http://api.stackexchange.com/2.1"
 PUSHOVER_BASE_URL = "https://api.pushover.net/1/messages.json"
@@ -34,7 +27,7 @@ def send_to_pushover(pushover_config, title, message, url=None, url_title=None):
     if url:
         payload["url"] = url
         payload["url_title"] = url_title
-    
+
     res = requests.post(PUSHOVER_BASE_URL, data=payload)
     if LOGGER and res.status_code == requests.codes.ok:
         LOGGER.debug("Sent to Pushover: %s", payload)
@@ -51,31 +44,31 @@ def send_questions_to_pushover(pushover_config, exchange, questions):
     '''
     title = "PushOverflow: " + exchange.name
     if len(questions)==1:
-        message = ("New question posted: " 
+        message = ("New question posted: "
                 + HTMLParser().unescape(questions[0].get("title")))
         url = questions[0].get("link")
         url_title = "Open question"
     else:
         message = str(len(questions)) + " new questions posted."
-        url = ("http://" + exchange.name 
+        url = ("http://" + exchange.name
             + ".stackexchange.com/questions?sort=newest")
         url_title = "Open " + exchange.name + ".stackexchange.com"
     send_to_pushover(pushover_config, title, message, url, url_title)
 
 
 def get_stack_exchange_questions(stack_exchange_site, from_date):
-    '''Get new questions posted to stackexchange site since the 
+    '''Get new questions posted to stackexchange site since the
        provided time.
     '''
     stack_url = STACK_EXCHANGE_BASE_URL + "/questions"
-    payload = { "fromdate": int(time.mktime(from_date.timetuple())), 
+    payload = { "fromdate": int(time.mktime(from_date.timetuple())),
                 "site": stack_exchange_site}
     res = requests.get(stack_url, params=payload)
     if res.status_code != requests.codes.ok:
         if LOGGER:
             LOGGER.warn("Failed to retrieve from StackExchange: %s", res.text)
         return {}
-    return res.json()	
+    return res.json()
 
 
 def filter_questions(questions, tags, excluded):
@@ -103,7 +96,7 @@ def filter_questions(questions, tags, excluded):
 
     return filtered_questions
 
-	
+
 def check_exchange(exchange, from_date):
     '''Get new questions for this stackexchange site based off of
        filters provided in configuration file.
@@ -114,38 +107,38 @@ def check_exchange(exchange, from_date):
     if exchange.get("exclude"):
         excluded = [x.strip() for x in exchange.get("exclude").split(",")]
     if LOGGER:
-        LOGGER.info("check_exchange: [%s], from_date: %s", 
+        LOGGER.info("check_exchange: [%s], from_date: %s",
                     exchange.name, from_date.isoformat())
- 
+
     questions = get_stack_exchange_questions(exchange.name, from_date)
     if questions:
         questions = filter_questions(questions, tags, excluded)
     return questions
-	
-	
+
+
 def main():
     '''Parse arguments, configuration file, loop through exchanges.'''
     parser = argparse.ArgumentParser(
                description="Check for new StackExchange questions and notify "
                            "via Pushover")
-    parser.add_argument("config", 
-                        metavar="config_file", 
-                        nargs="?", 
-                        default="pushoverflow.ini", 
+    parser.add_argument("config",
+                        metavar="config_file",
+                        nargs="?",
+                        default="pushoverflow.ini",
                         help="Configuration file (defaults to "
                              "'./pushoverflow.ini')")
-    parser.add_argument("-v", "--verbose", 
-                        dest="log_file", 
-                        action="store", 
-                        const=".pushoverflow.log", 
-                        nargs="?", 
+    parser.add_argument("-v", "--verbose",
+                        dest="log_file",
+                        action="store",
+                        const=".pushoverflow.log",
+                        nargs="?",
                         help="enable logging for debug (logs to "
                              "'./.pushoverflow.log')")
     parser.add_argument('--version', action='version', version=__version__)
     args = parser.parse_args()
 
     if (args.log_file):
-        logging.basicConfig(filename=args.log_file, 
+        logging.basicConfig(filename=args.log_file,
                             format='%(asctime)s - %(levelname)s: %(message)s')
         global LOGGER
         LOGGER = logging.getLogger(__name__)
@@ -166,13 +159,13 @@ def main():
         print ("Missing properties in configuration file:", err)
         return
     for section in config.sections():
-        if section == "Global" or section == "Pushover": 
+        if section == "Global" or section == "Pushover":
             continue
         exchange = config[section]
         questions = check_exchange(exchange, from_date)
         if len(questions) > 0:
             send_questions_to_pushover(config["Pushover"], exchange, questions)
 
-	
+
 if __name__ == "__main__":
     main()
