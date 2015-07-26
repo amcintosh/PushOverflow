@@ -7,7 +7,7 @@ Send Pushover notifications of new questions posted to StackExchange
 
 ### Installation and Requirements
 
-PushOverflow has been written for Python (tested with Travis CI on 2.* and 3.*, and I personally run it with Python3.2 on Ubuntu). 
+PushOverflow has been written for Python (tested with Travis CI on 2.7 and 3.*, and I personally run it with Python3.2 on Ubuntu). 
 
 To install:
 ```

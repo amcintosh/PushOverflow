@@ -2,6 +2,4 @@
 
 pep8
 flake8
-nose
 coverage
-mock
