@@ -6,15 +6,14 @@ if sys.version_info[0] == 2:
     requirements = "requirements27.txt"
 else:
     requirements = "requirements.txt"
-
+print requirements
 setup(
     name="pushoverflow",
     version=pushoverflow.__version__,
-    author="Andrew McIntosh",
-    author_email="andrew@amcintosh.net",
-    description="Pushover Notifications for Stackexchange Sites",
+    author=pushoverflow.__author__,
+    description="Pushover Notifications for StackExchange Sites",
     url="https://github.com/amcintosh/PushOverflow",
-    license="MIT",
+    license=pushoverflow.__license__,
     packages=find_packages(exclude=["*.test", "*.test.*"]),
     include_package_data=True,
     install_requires=open(requirements).readlines(),

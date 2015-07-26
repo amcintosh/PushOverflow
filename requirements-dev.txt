@@ -5,5 +5,3 @@ flake8
 nose
 coverage
 mock
-wheel
-httpretty==0.8.3

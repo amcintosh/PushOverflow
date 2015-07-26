@@ -1,6 +1,8 @@
 PushOverflow
 ============
 
+[![Build Status](https://travis-ci.org/amcintosh/PushOverflow.svg?branch=master)](https://travis-ci.org/amcintosh/PushOverflow)
+
 Send Pushover notifications of new questions posted to StackExchange
 
 ### Installation and Requirements

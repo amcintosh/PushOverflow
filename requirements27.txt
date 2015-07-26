@@ -1,3 +1,2 @@
--r requirements.txt
-
+requests==2.5.1
 configparser==3.3.0.post2
