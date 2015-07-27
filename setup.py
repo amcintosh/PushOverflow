@@ -6,7 +6,7 @@ if sys.version_info[0] == 2:
     requirements = "requirements27.txt"
 else:
     requirements = "requirements.txt"
-print requirements
+
 setup(
     name="pushoverflow",
     version=pushoverflow.__version__,
@@ -22,5 +22,6 @@ setup(
             "pushoverflow=pushoverflow.cli:main"
         ]
     },
-    test_suite="nose.collector"
+    test_suite="tests",
+    tests_require="httpretty"
 )

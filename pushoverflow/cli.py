@@ -1,4 +1,5 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
+from __future__ import (
+    absolute_import, division, print_function, unicode_literals)
 import configparser
 import requests
 import argparse
@@ -14,11 +15,13 @@ from pushoverflow import __version__
 
 STACK_EXCHANGE_BASE_URL = "http://api.stackexchange.com/2.1"
 PUSHOVER_BASE_URL = "https://api.pushover.net/1/messages.json"
-LOGGER = None
+log = logging.getLogger(__name__)
 
-def send_to_pushover(pushover_config, title, message, url=None, url_title=None):
+
+def send_to_pushover(pushover_config, title, message, url=None,
+                     url_title=None):
     '''Send notification to Pushover'''
-    payload = { "title": title, "message": message }
+    payload = {"title": title, "message": message}
     payload["token"] = pushover_config.get("appkey")
     payload["user"] = pushover_config.get("userkey")
     payload["priority"] = pushover_config.get("priority")
@@ -29,31 +32,32 @@ def send_to_pushover(pushover_config, title, message, url=None, url_title=None):
         payload["url_title"] = url_title
 
     res = requests.post(PUSHOVER_BASE_URL, data=payload)
-    if LOGGER and res.status_code == requests.codes.ok:
-        LOGGER.debug("Sent to Pushover: %s", payload)
-    elif LOGGER:
-        LOGGER.warn("Failed to send to Pushover: %s", res.text)
+    if res.status_code == requests.codes.ok:
+        log.debug("Sent to Pushover: %s", payload)
+        return True
+    else:
+        log.warn("Failed to send to Pushover: %s", res.text)
+        return False
 
 
-
-def send_questions_to_pushover(pushover_config, exchange, questions):
+def send_questions_to_pushover(pushover_config, exchange_name, questions):
     '''Send notification of new StackExchange questions to Pushover.
-  	   Title will contain the exchange name and message will contain
+       Title will contain the exchange name and message will contain
        either the number of new questions or the title of the question
        if only one exists.
     '''
-    title = "PushOverflow: " + exchange.name
-    if len(questions)==1:
+    title = "PushOverflow: " + exchange_name
+    if len(questions) == 1:
         message = ("New question posted: "
-                + HTMLParser().unescape(questions[0].get("title")))
+                   + HTMLParser().unescape(questions[0].get("title")))
         url = questions[0].get("link")
         url_title = "Open question"
     else:
-        message = str(len(questions)) + " new questions posted."
-        url = ("http://" + exchange.name
-            + ".stackexchange.com/questions?sort=newest")
-        url_title = "Open " + exchange.name + ".stackexchange.com"
-    send_to_pushover(pushover_config, title, message, url, url_title)
+        message = str(len(questions)) + " new questions posted"
+        url = ("http://" + exchange_name
+               + ".stackexchange.com/questions?sort=newest")
+        url_title = "Open " + exchange_name + ".stackexchange.com"
+    return send_to_pushover(pushover_config, title, message, url, url_title)
 
 
 def get_stack_exchange_questions(stack_exchange_site, from_date):
@@ -61,20 +65,21 @@ def get_stack_exchange_questions(stack_exchange_site, from_date):
        provided time.
     '''
     stack_url = STACK_EXCHANGE_BASE_URL + "/questions"
-    payload = { "fromdate": int(time.mktime(from_date.timetuple())),
-                "site": stack_exchange_site}
+    payload = {"fromdate": int(time.mktime(from_date.timetuple())),
+               "site": stack_exchange_site}
     res = requests.get(stack_url, params=payload)
     if res.status_code != requests.codes.ok:
-        if LOGGER:
-            LOGGER.warn("Failed to retrieve from StackExchange: %s", res.text)
+        log.warn("Failed to retrieve from StackExchange: %s", res.text)
         return {}
     return res.json()
 
 
 def filter_questions(questions, tags, excluded):
     '''Takes a list of questions and filters them.
-       If tags is not empty, will filter any questions that do not include one of these tags.
-       If excluded is not empty, will filter any questions that include one of these tags.
+       If tags is not empty, will filter any questions that do not
+       include one of these tags.
+       If excluded is not empty, will filter any questions that include
+       one of these tags.
     '''
     filtered_questions = []
     for question in questions.get("items"):
@@ -82,17 +87,15 @@ def filter_questions(questions, tags, excluded):
         in_tags = False
         in_excluded = False
         for tag in question_tags:
-            if len(tags)==0 or tag in tags:
+            if len(tags) == 0 or tag in tags:
                 in_tags = True
             if tag in excluded:
                 in_excluded = True
         if in_tags and not in_excluded:
             filtered_questions.append(question)
-            if LOGGER:
-                LOGGER.debug("Found question: '%s'", question.get("title"))
-        elif LOGGER:
-            LOGGER.debug("Filtered question: '%s', with tags: %s",
-                         question.get("title"), question_tags)
+            log.debug("Found question: '%s'", question.get("title"))
+        log.debug("Filtered question: '%s', with tags: %s",
+                  question.get("title"), question_tags)
 
     return filtered_questions
 
@@ -100,15 +103,14 @@ def filter_questions(questions, tags, excluded):
 def check_exchange(exchange, from_date):
     '''Get new questions for this stackexchange site based off of
        filters provided in configuration file.
-	'''
+    '''
     tags = excluded = []
     if exchange.get("tags"):
         tags = [x.strip() for x in exchange.get("tags").split(",")]
     if exchange.get("exclude"):
         excluded = [x.strip() for x in exchange.get("exclude").split(",")]
-    if LOGGER:
-        LOGGER.info("check_exchange: [%s], from_date: %s",
-                    exchange.name, from_date.isoformat())
+    log.info("check_exchange: [%s], from_date: %s",
+             exchange.name, from_date.isoformat())
 
     questions = get_stack_exchange_questions(exchange.name, from_date)
     if questions:
@@ -140,16 +142,16 @@ def main():
     if (args.log_file):
         logging.basicConfig(filename=args.log_file,
                             format='%(asctime)s - %(levelname)s: %(message)s')
-        global LOGGER
-        LOGGER = logging.getLogger(__name__)
-        LOGGER.setLevel(logging.DEBUG)
+        log.setLevel(logging.DEBUG)
+    else:
+        logging.basicConfig(format='%(message)s')
 
     config = configparser.ConfigParser()
     config.read(args.config)
 
     from_date = None
     try:
-        time_delta = int(config.get("Global","time_delta_minutes"))
+        time_delta = int(config.get("Global", "time_delta_minutes"))
         from_date = datetime.now() - timedelta(minutes=time_delta)
     except configparser.NoOptionError as err:
         print ("Missing properties in configuration file:", err)
@@ -164,7 +166,8 @@ def main():
         exchange = config[section]
         questions = check_exchange(exchange, from_date)
         if len(questions) > 0:
-            send_questions_to_pushover(config["Pushover"], exchange, questions)
+            send_questions_to_pushover(
+                config["Pushover"], exchange.name, questions)
 
 
 if __name__ == "__main__":
