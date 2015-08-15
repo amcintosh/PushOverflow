@@ -13,6 +13,10 @@ To install:
 ```
 $ python setup.py install
 ```
+or alternatively:
+```
+$ pip install pushoverflow
+```
 
 ### Setup
 
