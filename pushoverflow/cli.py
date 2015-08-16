@@ -4,6 +4,7 @@ import configparser
 import requests
 import argparse
 import logging
+import sys
 import time
 from datetime import datetime, timedelta
 try:
@@ -118,8 +119,7 @@ def check_exchange(exchange, from_date):
     return questions
 
 
-def main():
-    '''Parse arguments, configuration file, loop through exchanges.'''
+def parse_arguments(args=None):
     parser = argparse.ArgumentParser(
                description="Check for new StackExchange questions and notify "
                            "via Pushover")
@@ -137,7 +137,11 @@ def main():
                         help="enable logging for debug (logs to "
                              "'./.pushoverflow.log')")
     parser.add_argument('--version', action='version', version=__version__)
-    args = parser.parse_args()
+    return parser.parse_args(args)
+
+
+def get_configuration():
+    args = parse_arguments(sys.argv[1:])
 
     if (args.log_file):
         logging.basicConfig(filename=args.log_file,
@@ -147,8 +151,12 @@ def main():
         logging.basicConfig(format='%(message)s')
 
     config = configparser.ConfigParser()
-    config.read(args.config)
+    return config.read(args.config)
 
+
+def main():
+    '''Parse arguments, configuration file, loop through exchanges.'''
+    config = get_configuration()
     from_date = None
     try:
         time_delta = int(config.get("Global", "time_delta_minutes"))
@@ -157,9 +165,6 @@ def main():
         print ("Missing properties in configuration file:", err)
         return
 
-    except configparser.NoOptionError as err:
-        print ("Missing properties in configuration file:", err)
-        return
     for section in config.sections():
         if section == "Global" or section == "Pushover":
             continue
