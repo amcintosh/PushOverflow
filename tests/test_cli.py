@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 from pushoverflow import cli
 
 
@@ -21,9 +21,11 @@ class CliTests(unittest.TestCase):
         parser = cli.parse_arguments(["--verbose", "mylog.log", "myfile.ini"])
         self.assertEqual(parser.config, "myfile.ini")
 
+    @patch("pushoverflow.cli.log", autospec=True)
+    @patch("pushoverflow.cli.logging", autospec=True)
     @patch("pushoverflow.cli.parse_arguments")
     @patch("pushoverflow.cli.configparser")
-    def test_config_file(self, config_parser, arg_parser):
+    def test_config_file(self, config_parser, arg_parser, logging, log):
         arg_parser().config = "pushoverflow.ini"
         cli.get_configuration()
         self.assertTrue(config_parser.ConfigParser.called)
