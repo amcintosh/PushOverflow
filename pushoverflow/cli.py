@@ -151,7 +151,8 @@ def get_configuration():
         logging.basicConfig(format='%(message)s')
 
     config = configparser.ConfigParser()
-    return config.read(args.config)
+    config.read(args.config)
+    return config
 
 
 def main():
