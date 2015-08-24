@@ -1,6 +1,6 @@
-__version__ = "0.4"
+__version__ = "0.5"
 __date__ = "2013/16/07"
-__updated__ = "2015/25/07"
+__updated__ = "2015/23/08"
 __author__ = "Andrew McIntosh"
 __copyright__ = "Copyright 2015, Andrew McIntosh"
 __license__ = "MIT"
