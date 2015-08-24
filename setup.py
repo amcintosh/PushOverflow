@@ -25,6 +25,5 @@ setup(
             "pushoverflow=pushoverflow.cli:main"
         ]
     },
-    test_suite="tests",
-    tests_require=["httpretty", "mock"]
+    test_suite="tests"
 )
