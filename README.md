@@ -1,9 +1,9 @@
 PushOverflow
 ============
 
+[![PyPI version](https://badge.fury.io/py/PUSHOVERFLOW.svg)](http://badge.fury.io/py/PUSHOVERFLOW)
 [![Build Status](https://travis-ci.org/amcintosh/PushOverflow.svg?branch=master)](https://travis-ci.org/amcintosh/PushOverflow)
 [![codecov.io](http://codecov.io/github/amcintosh/PushOverflow/coverage.svg?branch=master)](http://codecov.io/github/amcintosh/PushOverflow?branch=master)
-[![PyPI version](https://badge.fury.io/py/PUSHOVERFLOW.svg)](http://badge.fury.io/py/PUSHOVERFLOW)
 
 Send Pushover notifications of new questions posted to StackExchange
 
