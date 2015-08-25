@@ -1,9 +1,15 @@
 import unittest
+import configparser
+import datetime
+import sys
+
 from pushoverflow import cli
 try:
-    from unittest.mock import patch
+    from unittest.mock import call, patch
+    from io import StringIO
 except ImportError:
-    from mock import patch
+    from mock import call, patch
+    from StringIO import StringIO
 
 
 class CliTests(unittest.TestCase):
@@ -23,6 +29,17 @@ class CliTests(unittest.TestCase):
 
         parser = cli.parse_arguments(["--verbose", "mylog.log", "myfile.ini"])
         self.assertEqual(parser.config, "myfile.ini")
+
+    def capture_output(self, method):
+        temp_stdout = sys.stdout
+        try:
+            out = StringIO()
+            sys.stdout = out
+            method()
+            output = out.getvalue().strip()
+        finally:
+            sys.stdout = temp_stdout
+        return output
 
     @patch("pushoverflow.cli.log", autospec=True)
     @patch("pushoverflow.cli.logging", autospec=True)
@@ -55,3 +72,101 @@ class CliTests(unittest.TestCase):
         logging.basicConfig.assert_called_with(
             filename=args().log_file,
             format='%(asctime)s - %(levelname)s: %(message)s')
+
+    @patch("pushoverflow.cli.check_exchange")
+    @patch("pushoverflow.cli.get_configuration")
+    def test_main_no_config(self, mock_config, check):
+        conf = configparser.ConfigParser()
+        mock_config.return_value = conf
+
+        output = self.capture_output(cli.main)
+
+        # Missing Global config section
+        self.assertTrue(mock_config.called)
+        self.assertFalse(check.called)
+        self.assertTrue(
+            "Missing properties in configuration file: No section:" in output)
+        self.assertTrue("'Global'" in output)
+
+        # Missing Pushover config section
+        conf.read_dict({
+            "Global": {"time_delta_minutes": 60}
+            })
+        output = self.capture_output(cli.main)
+        self.assertTrue(
+            "Missing properties in configuration file: No section:" in output)
+        self.assertTrue("'Pushover'" in output)
+
+        # Missing Pushover option
+        conf.read_dict({
+            "Pushover": {"foo": "bar"}
+            })
+        output = self.capture_output(cli.main)
+        self.assertTrue(
+            "Missing properties in configuration file: No option" in output)
+        self.assertTrue("'appkey'" in output)
+        self.assertTrue("'Pushover'" in output)
+
+    @patch("pushoverflow.cli.check_exchange")
+    @patch("pushoverflow.cli.get_configuration")
+    def test_main_no_exchanges(self, mock_config, check):
+        conf = configparser.ConfigParser()
+        conf.read_dict({
+            "Global": {"time_delta_minutes": 60}
+            })
+        mock_config.return_value = conf
+
+        cli.main()
+
+        self.assertTrue(mock_config.called)
+        self.assertFalse(check.called)
+
+    @patch("pushoverflow.cli.send_questions_to_pushover")
+    @patch("pushoverflow.cli.check_exchange")
+    @patch("pushoverflow.cli.get_check_time")
+    @patch("pushoverflow.cli.get_configuration")
+    def test_main_with_exchanges(self, mock_config, now, check, pushover):
+        now.return_value = datetime.datetime.now()
+        conf = configparser.ConfigParser()
+        conf.read_dict({
+            "Global": {"time_delta_minutes": 60},
+            "Pushover": {"appkey": "some_key", "userkey": "some_key"},
+            "stackoverflow": {"tags": "python"}
+            })
+        mock_config.return_value = conf
+        cli.main()
+
+        self.assertTrue(mock_config.called)
+        check.assert_called_once_with(conf["stackoverflow"], now())
+        self.assertFalse(pushover.called)
+
+    @patch("pushoverflow.cli.send_questions_to_pushover")
+    @patch("pushoverflow.cli.check_exchange")
+    @patch("pushoverflow.cli.get_check_time")
+    @patch("pushoverflow.cli.get_configuration")
+    def test_main_with_exchange_questions(self, mock_config, now, check,
+                                          pushover):
+        now.return_value = datetime.datetime.now()
+        conf = configparser.ConfigParser()
+        conf.read_dict({
+            "Global": {"time_delta_minutes": 60},
+            "Pushover": {"appkey": "some_key", "userkey": "some_key"},
+            "stackoverflow": {"tags": "python"},
+            "scifi": {"tags": "star-trek"}
+            })
+        mock_config.return_value = conf
+        check.return_value = ["test"]
+
+        cli.main()
+
+        self.assertTrue(mock_config.called)
+        check.assert_has_calls([
+            call(conf["stackoverflow"], now()),
+            call(conf["scifi"], now())
+        ], any_order=True)
+
+        self.assertTrue(pushover.called)
+        pushover.assert_has_calls([
+            call(conf["Pushover"], "stackoverflow", ["test"]),
+            call(conf["Pushover"], "scifi", ["test"])
+        ], any_order=True)

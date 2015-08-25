@@ -1,12 +1,12 @@
 from __future__ import (
     absolute_import, division, print_function, unicode_literals)
 import configparser
+import datetime
 import requests
 import argparse
 import logging
 import sys
 import time
-from datetime import datetime, timedelta
 try:
     from html.parser import HTMLParser
 except ImportError:
@@ -155,14 +155,22 @@ def get_configuration():
     return config
 
 
+def get_check_time(time_delta_minutes):
+    '''Here mostly for test mocking'''
+    return datetime.datetime.now() - datetime.timedelta(
+        minutes=time_delta_minutes)
+
+
 def main():
     '''Parse arguments, configuration file, loop through exchanges.'''
     config = get_configuration()
     from_date = None
     try:
         time_delta = int(config.get("Global", "time_delta_minutes"))
-        from_date = datetime.now() - timedelta(minutes=time_delta)
-    except configparser.NoOptionError as err:
+        from_date = get_check_time(time_delta)
+        config.get("Pushover", "appkey")
+        config.get("Pushover", "userkey")
+    except (configparser.NoSectionError, configparser.NoOptionError) as err:
         print ("Missing properties in configuration file:", err)
         return
 
@@ -174,7 +182,3 @@ def main():
         if len(questions) > 0:
             send_questions_to_pushover(
                 config["Pushover"], exchange.name, questions)
-
-
-if __name__ == "__main__":
-    main()
