@@ -6,7 +6,7 @@ import requests
 import argparse
 import logging
 import sys
-import time
+import calendar
 try:
     from html.parser import HTMLParser
 except ImportError:
@@ -66,7 +66,7 @@ def get_stack_exchange_questions(stack_exchange_site, from_date):
        provided time.
     '''
     stack_url = STACK_EXCHANGE_BASE_URL + "/questions"
-    payload = {"fromdate": int(time.mktime(from_date.timetuple())),
+    payload = {"fromdate": calendar.timegm(from_date.utctimetuple()),
                "site": stack_exchange_site}
     res = requests.get(stack_url, params=payload)
     if res.status_code != requests.codes.ok:
@@ -157,7 +157,7 @@ def get_configuration():
 
 def get_check_time(time_delta_minutes):
     '''Here mostly for test mocking'''
-    return datetime.datetime.now() - datetime.timedelta(
+    return datetime.datetime.utcnow() - datetime.timedelta(
         minutes=time_delta_minutes)
 
 
