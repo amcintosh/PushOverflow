@@ -1,4 +1,4 @@
-__version__ = "0.6"
+__version__ = "0.6.1"
 __date__ = "2013/16/07"
 __updated__ = "2015/27/08"
 __author__ = "Andrew McIntosh"

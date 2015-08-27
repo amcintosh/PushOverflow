@@ -13,6 +13,7 @@ setup(
     author=pushoverflow.__author__,
     author_email="andrew@amcintosh.net",
     description="Pushover Notifications for StackExchange Sites",
+    long_description=open("README.rst").read(),
     url="https://github.com/amcintosh/PushOverflow",
     download_url=("https://github.com/amcintosh/PushOverflow/tarball/%s" %
                   pushoverflow.__version__),
