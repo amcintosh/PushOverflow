@@ -11,10 +11,9 @@ setup(
     name="pushoverflow",
     version=pushoverflow.__version__,
     author=pushoverflow.__author__,
+    author_email="andrew@amcintosh.net",
     description="Pushover Notifications for StackExchange Sites",
     url="https://github.com/amcintosh/PushOverflow",
-    download_url=("https://github.com/amcintosh/PushOverflow/tarball/%s" %
-                  pushoverflow.__version__),
     keywords=["stackexchange", "pushover", "notifications"],
     license=pushoverflow.__license__,
     packages=find_packages(exclude=["*.test", "*.test.*"]),
