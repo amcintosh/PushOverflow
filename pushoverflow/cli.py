@@ -37,7 +37,7 @@ def send_to_pushover(pushover_config, title, message, url=None,
         log.debug("Sent to Pushover: %s", payload)
         return True
     else:
-        log.warn("Failed to send to Pushover: %s", res.text)
+        log.warning("Failed to send to Pushover: %s", res.text)
         return False
 
 
@@ -49,8 +49,8 @@ def send_questions_to_pushover(pushover_config, exchange_name, questions):
     '''
     title = "PushOverflow: " + exchange_name
     if len(questions) == 1:
-        message = ("New question posted: "
-                   + HTMLParser().unescape(questions[0].get("title")))
+        message = ("New question posted: " + HTMLParser().unescape(
+            questions[0].get("title")))
         url = questions[0].get("link")
         url_title = "Open question"
     else:
@@ -70,7 +70,7 @@ def get_stack_exchange_questions(stack_exchange_site, from_date):
                "site": stack_exchange_site}
     res = requests.get(stack_url, params=payload)
     if res.status_code != requests.codes.ok:
-        log.warn("Failed to retrieve from StackExchange: %s", res.text)
+        log.warning("Failed to retrieve from StackExchange: %s", res.text)
         return {}
     return res.json()
 
