@@ -1,7 +1,7 @@
 PushOverflow
 ============
 
-|PyPI version| |Build Status| |codecov.io|
+|PyPI version| |Build Status| |codecov.io| |Codacy Badge|
 
 Send Pushover notifications of new questions posted to StackExchange
 
@@ -56,10 +56,9 @@ Eg. For ``time_delta_minutes = 20``:
 ``*/20 * * * * pushoverflow /path/to/config_file`` or
 ``*/20 * * * * cd /path/to/config_directory && pushoverflow``
 
-Todo
-----
+Future Ideas
+------------
 
--  Some code cleanup
 -  Allow boolean AND of multiple tags
 -  More granular priority settings
 
@@ -69,3 +68,5 @@ Todo
    :target: https://travis-ci.org/amcintosh/PushOverflow
 .. |codecov.io| image:: http://codecov.io/github/amcintosh/PushOverflow/coverage.svg?branch=master
    :target: http://codecov.io/github/amcintosh/PushOverflow?branch=master
+.. |Codacy Badge| image:: https://api.codacy.com/project/badge/1e7ae95a28774082a66c45a028b0507d
+   :target: https://www.codacy.com/app/nacho-vonkickbutt/PushOverflow
