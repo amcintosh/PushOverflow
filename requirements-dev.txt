@@ -2,6 +2,7 @@
 
 pep8
 flake8
-coverage<4.0
+coverage
 httpretty
 mock
+
