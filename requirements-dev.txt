@@ -2,7 +2,6 @@
 
 pep8
 flake8
-coverage<4.0; python_version == '3.2'
-coverage; python_version != '3.2'
+coverage
 httpretty
 mock
