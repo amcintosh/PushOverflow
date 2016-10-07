@@ -2,8 +2,9 @@ from setuptools import setup, find_packages
 import sys
 import pushoverflow
 
-if sys.version_info[0] == 2:
-    requirements = "requirements27.txt"
+ver = sys.version_info
+if ver[0] == 2 or (ver[0] == 3 and ver[1] == 2):
+    requirements = "requirements27-32.txt"
 else:
     requirements = "requirements.txt"
 
