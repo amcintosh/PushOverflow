@@ -9,7 +9,7 @@ Installation and Requirements
 -----------------------------
 
 PushOverflow has been written for Python (tested with Travis CI on 2.7
-and 3.2+, and I personally run it with Python3.2 on Ubuntu).
+and 3.3+, and I personally run it with Python 3.4 on Debian).
 
 To install:
 
