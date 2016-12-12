@@ -1,0 +1,4 @@
+linters:
+    flake8:
+        max-line-length: 80
+        max-complexity: 20
