@@ -20,5 +20,8 @@ pip-log.txt
 .coverage
 .tox
 
+# IDE
+.vscode
+
 #PushOverflow
 pushoverflow.ini

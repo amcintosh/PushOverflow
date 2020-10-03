@@ -64,15 +64,16 @@ class CliTests(unittest.TestCase):
 
     @patch("pushoverflow.cli.log", autospec=True)
     @patch("pushoverflow.cli.logging", autospec=True)
-    @patch("pushoverflow.cli.parse_arguments")
-    def test_logging_verbose(self, args, logging, log):
-        args().log_file = ".pushoverflow.log"
+    @patch("pushoverflow.cli.parse_arguments", autospec=True)
+    @patch("pushoverflow.cli.configparser")
+    def test_logging_verbose(self, config_parser, arg_parser, logging, log):
+        arg_parser.return_value.log_file = ".pushoverflow.log"
         logging.DEBUG = 30
         cli.get_configuration()
 
         log.setLevel.assert_called_with(30)
         logging.basicConfig.assert_called_with(
-            filename=args().log_file,
+            filename=arg_parser.return_value.log_file,
             format='%(asctime)s - %(levelname)s: %(message)s')
 
     @patch("pushoverflow.cli.check_exchange")

@@ -10,7 +10,7 @@ Send Pushover notifications of new questions posted to StackExchange
 
 ### Installation and Requirements
 
-PushOverflow has been written for Python (tested with Travis CI on 2.7 and 3.3+, and I personally run it with Python 3.4 on Debian).
+PushOverflow has been written for Python (tested with Travis CI on 2.7 and 3.5+.
 
 To install:
 ```
@@ -23,7 +23,7 @@ $ pip install pushoverflow
 
 ### Setup
 
-- Copy and rename `pushoverflow.ini.sample` to `pushoverflow.ini`. By default PushOverflow will look for the file in the current directory (eg. `./pushoverflow.ini`) or you can specify the path at runtime (eg. `pushoverflow /path/to/pushoverflow.ini`). 
+- Copy and rename `pushoverflow.ini.sample` to `pushoverflow.ini`. By default PushOverflow will look for the file in the current directory (eg. `./pushoverflow.ini`) or you can specify the path at runtime (eg. `pushoverflow /path/to/pushoverflow.ini`).
 
 - Edit the configuration for the StackExchange sites you would like notifications. `tags` allows you to filter questions with one of those tags (comma separated tags treated as boolean OR). `exclude` will filter out questions with any oof those tags. Both are optional.
 
