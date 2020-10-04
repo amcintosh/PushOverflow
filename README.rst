@@ -61,8 +61,8 @@ Future Ideas
 -  Allow boolean AND of multiple tags
 -  More granular priority settings
 
-.. |PyPI version| image:: https://badge.fury.io/py/PUSHOVERFLOW.svg
-   :target: http://badge.fury.io/py/PUSHOVERFLOW
+.. |PyPI version| image:: https://badge.fury.io/py/pushoverflow.svg
+   :target: http://badge.fury.io/py/pushoverflow
 .. |Build Status| image:: https://travis-ci.org/amcintosh/PushOverflow.svg?branch=master
    :target: https://travis-ci.org/amcintosh/PushOverflow
 .. |codecov.io| image:: http://codecov.io/github/amcintosh/PushOverflow/coverage.svg?branch=master
