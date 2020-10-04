@@ -2,9 +2,9 @@ import argparse
 import calendar
 import configparser
 import datetime
+import html
 import logging
 import sys
-from html.parser import HTMLParser
 
 import requests
 
@@ -45,7 +45,7 @@ def send_questions_to_pushover(pushover_config, exchange_name, questions):
     '''
     title = "PushOverflow: " + exchange_name
     if len(questions) == 1:
-        message = ("New question posted: " + HTMLParser().unescape(
+        message = ("New question posted: " + html.unescape(
             questions[0].get("title")))
         url = questions[0].get("link")
         url_title = "Open question"
