@@ -1,4 +1,5 @@
 import unittest
+
 import httpretty
 from pushoverflow import cli
 

@@ -1,12 +1,10 @@
-import unittest
 import configparser
 import datetime
+import unittest
+from unittest.mock import patch
+
 import httpretty
 from pushoverflow import cli
-try:
-    from unittest.mock import patch
-except ImportError:
-    from mock import patch
 
 
 class StackExchangeTests(unittest.TestCase):

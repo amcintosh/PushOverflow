@@ -1,17 +1,11 @@
-import unittest
 import configparser
 import datetime
+from io import StringIO
 import sys
+import unittest
+from unittest.mock import call, patch
 
 from pushoverflow import cli
-try:
-    from unittest.mock import call, patch
-except ImportError:
-    from mock import call, patch
-try:
-    from StringIO import StringIO
-except ImportError:
-    from io import StringIO
 
 
 class CliTests(unittest.TestCase):
