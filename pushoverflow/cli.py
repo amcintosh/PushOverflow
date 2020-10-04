@@ -1,18 +1,14 @@
-from __future__ import (
-    absolute_import, division, print_function, unicode_literals)
+import argparse
+import calendar
 import configparser
 import datetime
-import requests
-import argparse
 import logging
 import sys
-import calendar
-try:
-    from html.parser import HTMLParser
-except ImportError:
-    from HTMLParser import HTMLParser
-from pushoverflow import __version__
+from html.parser import HTMLParser
 
+import requests
+
+from pushoverflow import __version__
 
 STACK_EXCHANGE_BASE_URL = "http://api.stackexchange.com/2.1"
 PUSHOVER_BASE_URL = "https://api.pushover.net/1/messages.json"
@@ -171,7 +167,7 @@ def main():
         config.get("Pushover", "appkey")
         config.get("Pushover", "userkey")
     except (configparser.NoSectionError, configparser.NoOptionError) as err:
-        print ("Missing properties in configuration file:", err)
+        print("Missing properties in configuration file:", err)
         return
 
     for section in config.sections():

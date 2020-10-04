@@ -1,11 +1,5 @@
 from setuptools import setup, find_packages
-import sys
 import pushoverflow
-
-if sys.version_info[0] == 2:
-    requirements = "requirements27.txt"
-else:
-    requirements = "requirements.txt"
 
 setup(
     name="pushoverflow",
@@ -21,7 +15,7 @@ setup(
     license=pushoverflow.__license__,
     packages=find_packages(exclude=["*.test", "*.test.*"]),
     include_package_data=True,
-    install_requires=open(requirements).readlines(),
+    install_requires=open("requirements.txt").readlines(),
     entry_points={
         "console_scripts": [
             "pushoverflow=pushoverflow.cli:main"

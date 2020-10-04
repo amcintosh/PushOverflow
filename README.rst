@@ -8,8 +8,7 @@ Send Pushover notifications of new questions posted to StackExchange
 Installation and Requirements
 -----------------------------
 
-PushOverflow has been written for Python (tested with Travis CI on 2.7
-and 3.5+.
+PushOverflow has been written for Python (tested with Travis CI on 3.5+).
 
 To install:
 
