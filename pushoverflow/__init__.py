@@ -1,6 +1,0 @@
-__version__ = "1.0.0"
-__date__ = "2013/16/07"
-__updated__ = "2020/04/10"
-__author__ = "Andrew McIntosh"
-__copyright__ = "Copyright 2024, Andrew McIntosh"
-__license__ = "MIT"

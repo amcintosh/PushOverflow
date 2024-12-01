@@ -4,11 +4,13 @@ import configparser
 import datetime
 import html
 import logging
+import os
 import sys
 
 import requests
 
-from pushoverflow import __version__
+with open(os.path.join(os.path.dirname(__file__), "VERSION")) as f:
+    VERSION = f.readlines()[0].strip()
 
 STACK_EXCHANGE_BASE_URL = "http://api.stackexchange.com/2.1"
 PUSHOVER_BASE_URL = "https://api.pushover.net/1/messages.json"
@@ -134,7 +136,7 @@ def parse_arguments(args=None):
         nargs="?",
         help="enable logging for debug (logs to './.pushoverflow.log')"
     )
-    parser.add_argument('--version', action='version', version=__version__)
+    parser.add_argument('--version', action='version', version=VERSION)
     return parser.parse_args(args)
 
 
