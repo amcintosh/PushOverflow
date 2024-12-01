@@ -117,21 +117,23 @@ def check_exchange(exchange, from_date):
 
 def parse_arguments(args=None):
     parser = argparse.ArgumentParser(
-               description="Check for new StackExchange questions and notify "
-                           "via Pushover")
-    parser.add_argument("config",
-                        metavar="config_file",
-                        nargs="?",
-                        default="pushoverflow.ini",
-                        help="Configuration file (defaults to "
-                             "'./pushoverflow.ini')")
-    parser.add_argument("-v", "--verbose",
-                        dest="log_file",
-                        action="store",
-                        const=".pushoverflow.log",
-                        nargs="?",
-                        help="enable logging for debug (logs to "
-                             "'./.pushoverflow.log')")
+        description="Check for new StackExchange questions and notify via Pushover"
+    )
+    parser.add_argument(
+        "config",
+        metavar="config_file",
+        nargs="?",
+        default="pushoverflow.ini",
+        help="Configuration file (defaults to './pushoverflow.ini')"
+    )
+    parser.add_argument(
+        "-v", "--verbose",
+        dest="log_file",
+        action="store",
+        const=".pushoverflow.log",
+        nargs="?",
+        help="enable logging for debug (logs to './.pushoverflow.log')"
+    )
     parser.add_argument('--version', action='version', version=__version__)
     return parser.parse_args(args)
 
