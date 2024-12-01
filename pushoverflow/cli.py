@@ -1,11 +1,10 @@
-import argparse
+import click
 import calendar
 import configparser
 import datetime
 import html
 import logging
 import os
-import sys
 
 import requests
 
@@ -117,42 +116,11 @@ def check_exchange(exchange, from_date):
     return questions
 
 
-def parse_arguments(args=None):
-    parser = argparse.ArgumentParser(
-        description="Check for new StackExchange questions and notify via Pushover"
-    )
-    parser.add_argument(
-        "config",
-        metavar="config_file",
-        nargs="?",
-        default="pushoverflow.ini",
-        help="Configuration file (defaults to './pushoverflow.ini')"
-    )
-    parser.add_argument(
-        "-v", "--verbose",
-        dest="log_file",
-        action="store",
-        const=".pushoverflow.log",
-        nargs="?",
-        help="enable logging for debug (logs to './.pushoverflow.log')"
-    )
-    parser.add_argument('--version', action='version', version=VERSION)
-    return parser.parse_args(args)
-
-
-def get_configuration():
-    args = parse_arguments(sys.argv[1:])
-
-    if (args.log_file):
-        logging.basicConfig(filename=args.log_file,
-                            format='%(asctime)s - %(levelname)s: %(message)s')
-        log.setLevel(logging.DEBUG)
+def configure_logging(verbose: bool):
+    if verbose:
+        logging.basicConfig(format="%(asctime)s - %(levelname)s: %(message)s", level=logging.DEBUG)
     else:
-        logging.basicConfig(format='%(message)s')
-
-    config = configparser.ConfigParser()
-    config.read(args.config)
-    return config
+        logging.basicConfig(format="%(message)s", level=logging.INFO)
 
 
 def get_check_time(time_delta_minutes):
@@ -161,9 +129,21 @@ def get_check_time(time_delta_minutes):
         minutes=time_delta_minutes)
 
 
-def main():
-    '''Parse arguments, configuration file, loop through exchanges.'''
-    config = get_configuration()
+def get_configuration(config_file: str):
+    config = configparser.ConfigParser()
+    config.read(config_file)
+    return config
+
+
+@click.command()
+@click.option('-v', '--verbose', is_flag=True, help="Enable debug logging.")
+@click.option('-c', '--config', default="./pushoverflow.ini",
+              help="Path to configuration file (Defaults to ./pushoverflow.ini).")
+@click.version_option(version=VERSION)
+def main(config: str, verbose: bool):
+    """Check for new StackExchange questions and notify via Pushover"""
+    configure_logging(verbose)
+    config = get_configuration(config)
     from_date = None
     try:
         time_delta = int(config.get("Global", "time_delta_minutes"))
