@@ -14,9 +14,11 @@ class StackExchangeTests(unittest.TestCase):
     def test_check_exchange(self, get_questions, filter_questions):
         conf = configparser.ConfigParser()
         conf.read_dict({
-            "stackoverflow": {"tags": "python, java",
-                              "exclude": "logging, stuff"},
-            })
+            "stackoverflow": {
+                "tags": "python, java",
+                "exclude": "logging, stuff"
+            }
+        })
         now = datetime.datetime.now()
         get_questions.return_value = ["test"]
 
@@ -34,7 +36,7 @@ class StackExchangeTests(unittest.TestCase):
         conf = configparser.ConfigParser()
         conf.read_dict({
             "stackoverflow": {},
-            })
+        })
         now = datetime.datetime.now()
         get_questions.return_value = None
 
