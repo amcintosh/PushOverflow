@@ -4,19 +4,19 @@ import pushoverflow
 with open("README.md", encoding="utf-8") as f:
     long_description = f.read()
 
-with open("freshbooks/VERSION") as f:
-    version = f.readlines()[0].strip()
+with open("pushoverflow/VERSION") as f:
+    VERSION = f.readlines()[0].strip()
 
 setup(
     name="pushoverflow",
-    version=version,
+    version=VERSION,
     author="Andrew McIntosh",
     author_email="andrew@amcintosh.net",
     description="Pushover Notifications for StackExchange Sites",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/amcintosh/PushOverflow",
-    download_url=f"https://github.com/amcintosh/PushOverflow/archive/refs/tags/{pushoverflow.__version__}.tar.gz",
+    download_url=f"https://github.com/amcintosh/PushOverflow/archive/refs/tags/{VERSION}.tar.gz",
     keywords=["stackexchange", "pushover", "notifications"],
     license="MIT",
     packages=find_packages(exclude=["tests", "*.test", "*.test.*"]),
