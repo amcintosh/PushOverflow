@@ -4,6 +4,7 @@ from unittest.mock import patch
 from click.testing import CliRunner
 
 from pushoverflow import cli
+from pushoverflow.core import Notifier
 
 
 @patch("pushoverflow.cli.log", autospec=True)
@@ -20,6 +21,29 @@ def test_logging_verbose(logging):
     cli.configure_logging(True)
 
     logging.basicConfig.assert_called_with(format='%(asctime)s - %(levelname)s: %(message)s', level=logging.DEBUG)
+
+
+@patch.object(Notifier, "process")
+@patch("pushoverflow.cli.get_configuration")
+def test_main(mock_config, mock_notifier):
+    conf = configparser.ConfigParser()
+    conf.read_dict({
+        "Global": {
+            "check_minutes_back": 60
+        },
+        "Pushover": {
+            "appkey": "some_key",
+            "userkey": "some_key",
+            "priority": 0
+        }
+    })
+    mock_config.return_value = conf
+
+    runner = CliRunner()
+    runner.invoke(cli.main)
+
+    assert mock_config.called
+    assert mock_notifier.called
 
 
 @patch("pushoverflow.core.check_exchange")

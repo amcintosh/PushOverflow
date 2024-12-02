@@ -2,7 +2,7 @@ import configparser
 import datetime
 from unittest.mock import patch
 
-import httpretty
+import responses
 
 from pushoverflow.stack_exchange import check_exchange, get_stack_exchange_questions
 
@@ -45,30 +45,33 @@ def test_check_exchange_no_params(get_questions, filter_questions):
     assert not filter_questions.called
 
 
-@httpretty.activate
+@responses.activate
 def test_get_questions():
-    httpretty.register_uri(
-        httpretty.GET, "https://api.stackexchange.com/2.1/questions",
-        body='[{"foo": "bar"}]',
+    responses.add(
+        responses.GET,
+        "https://api.stackexchange.com/2.1/questions",
+        json=[{"foo": "bar"}],
         status=200
     )
     test_params = {
-        "fromdate": ["1440516360"], "site": ["stackoverflow"]
+        "fromdate": "1440516360",
+        "site": "stackoverflow"
     }
     from_time = datetime.datetime(2015, 8, 25, 15, 26, 0, 0)
 
     result = get_stack_exchange_questions("stackoverflow", from_time)
 
     assert result == [{"foo": "bar"}]
-    assert httpretty.last_request().method == "GET"
-    assert httpretty.last_request().querystring == test_params
+    assert responses.calls[0].request.method == "GET"
+    assert responses.calls[0].request.params == test_params
 
 
-@httpretty.activate
+@responses.activate
 def test_get_questions_fail():
-    httpretty.register_uri(
-        httpretty.GET, "https://api.stackexchange.com/2.1/questions",
-        body='[{"foo": "bar"}]',
+    responses.add(
+        responses.GET,
+        "https://api.stackexchange.com/2.1/questions",
+        json=[{"foo": "bar"}],
         status=401
     )
 

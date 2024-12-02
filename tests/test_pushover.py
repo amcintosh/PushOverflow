@@ -1,7 +1,7 @@
 import configparser
 
-import httpretty
 import pytest
+import responses
 
 from pushoverflow.core import Notifier
 
@@ -23,44 +23,42 @@ def test_config():
     yield config
 
 
-@httpretty.activate
+@responses.activate
 def test_send_single_question(test_config):
-    httpretty.register_uri(
-        httpretty.POST, "https://api.pushover.net/1/messages.json",
-        status=200
-    )
-    test_params = [
-        "title=PushOverflow%3A+TEST", "url=A_LINK_SOMEWHERE",
-        "priority=0", "token=APP_KEY", "user=USER_KEY", "device=DEVICE",
-        "message=New+question+posted%3A+A+TITLE", "url_title=Open+question"
-    ]
+    responses.add(responses.POST, "https://api.pushover.net/1/messages.json", status=200)
+    test_params = {
+        "title=PushOverflow%3A+TEST",
+        "url=A_LINK_SOMEWHERE",
+        "priority=0",
+        "token=APP_KEY",
+        "user=USER_KEY",
+        "device=DEVICE",
+        "message=New+question+posted%3A+A+TITLE",
+        "url_title=Open+question"
+    }
 
     questions = [{"title": "A TITLE", "link": "A_LINK_SOMEWHERE"}]
     notifier = Notifier(test_config)
     success = notifier.handle_questions("TEST", questions)
 
     assert success
-    assert httpretty.last_request().method == "POST"
-
-    body = httpretty.last_request().body
-    assert len(body.rsplit(b"&")) == 8
-    for param in test_params:
-        assert param in str(body)
+    assert responses.calls[0].request.method == "POST"
+    assert set(responses.calls[0].request.body.split("&")) == test_params
 
 
-@httpretty.activate
+@responses.activate
 def test_send_questions(test_config):
-    httpretty.register_uri(
-        httpretty.POST, "https://api.pushover.net/1/messages.json",
-        status=200
-    )
-    test_params = [
-        "title=PushOverflow%3A+TEST", "priority=0",
+    responses.add(responses.POST, "https://api.pushover.net/1/messages.json", status=200)
+    test_params = {
+        "title=PushOverflow%3A+TEST",
+        "priority=0",
         "url=https%3A%2F%2FTEST.stackexchange.com%2Fquestions%3Fsort"
-        "%3Dnewest", "token=APP_KEY", "user=USER_KEY",
+        "%3Dnewest",
+        "token=APP_KEY",
+        "user=USER_KEY",
         "message=2+new+questions+posted",
         "url_title=Open+TEST.stackexchange.com"
-    ]
+    }
 
     questions = [
         {"title": "TITLE 1", "link": "LINK_1"},
@@ -71,22 +69,17 @@ def test_send_questions(test_config):
     success = notifier.handle_questions("TEST", questions)
 
     assert success
-    assert httpretty.last_request().method == "POST"
-
-    body = httpretty.last_request().body
-    assert len(body.rsplit(b"&")) == 7
-    for param in test_params:
-        assert param in str(body)
+    assert responses.calls[0].request.method == "POST"
+    assert set(responses.calls[0].request.body.split("&")) == test_params
 
 
-@httpretty.activate
+@responses.activate
 def test_failed_send_question(test_config):
-    httpretty.register_uri(
-        httpretty.POST, "https://api.pushover.net/1/messages.json",
-        status=400
-    )
+    responses.add(responses.POST, "https://api.pushover.net/1/messages.json", status=400)
     questions = [{"title": "A TITLE", "link": "A_LINK_SOMEWHERE"}]
+
     notifier = Notifier(test_config)
     success = notifier.handle_questions("TEST", questions)
 
     assert not success
+    assert responses.calls[0].request.method == "POST"

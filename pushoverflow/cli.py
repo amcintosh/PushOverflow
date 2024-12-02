@@ -19,7 +19,7 @@ def configure_logging(verbose: bool):
         logging.basicConfig(format="%(message)s", level=logging.INFO)
 
 
-def get_configuration(config_file: str):
+def get_configuration(config_file: str):  # pragma: no cover
     config = configparser.ConfigParser()
     config.read(config_file)
     return config
