@@ -56,7 +56,7 @@ def test_send_questions(test_config):
     )
     test_params = [
         "title=PushOverflow%3A+TEST", "priority=0",
-        "url=http%3A%2F%2FTEST.stackexchange.com%2Fquestions%3Fsort"
+        "url=https%3A%2F%2FTEST.stackexchange.com%2Fquestions%3Fsort"
         "%3Dnewest", "token=APP_KEY", "user=USER_KEY",
         "message=2+new+questions+posted",
         "url_title=Open+TEST.stackexchange.com"
