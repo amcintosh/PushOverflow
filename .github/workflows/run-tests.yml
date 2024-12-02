@@ -24,8 +24,7 @@ jobs:
         pip install -r requirements-dev.txt
     - name: Lint with flake8
       run: |
-        flake8 pushoverflow --count --show-source --statistics
-        flake8 tests --count --show-source --statistics
-    - name: Run unit tests
+        make check-style
+    - name: Test with pytest
       run: |
-        python -m unittest discover tests
+        make test
