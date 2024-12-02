@@ -48,7 +48,7 @@ def test_check_exchange_no_params(get_questions, filter_questions):
 @httpretty.activate
 def test_get_questions():
     httpretty.register_uri(
-        httpretty.GET, "http://api.stackexchange.com/2.1/questions",
+        httpretty.GET, "https://api.stackexchange.com/2.1/questions",
         body='[{"foo": "bar"}]',
         status=200
     )
@@ -67,7 +67,7 @@ def test_get_questions():
 @httpretty.activate
 def test_get_questions_fail():
     httpretty.register_uri(
-        httpretty.GET, "http://api.stackexchange.com/2.1/questions",
+        httpretty.GET, "https://api.stackexchange.com/2.1/questions",
         body='[{"foo": "bar"}]',
         status=401
     )

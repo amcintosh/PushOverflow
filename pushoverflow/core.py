@@ -4,6 +4,7 @@ from datetime import datetime, timedelta, timezone
 
 import requests
 
+from pushoverflow import TIMEOUT
 from pushoverflow.stack_exchange import check_exchange
 
 PUSHOVER_BASE_URL = "https://api.pushover.net/1/messages.json"
@@ -34,7 +35,7 @@ class Notifier:
         if "device" in pushover_config:
             payload["device"] = pushover_config.get("device")
 
-        res = requests.post(PUSHOVER_BASE_URL, data=payload)
+        res = requests.post(PUSHOVER_BASE_URL, data=payload, timeout=TIMEOUT)
         if res.status_code == requests.codes.ok:
             log.debug("Sent to Pushover: %s", payload)
             return True
@@ -54,7 +55,7 @@ class Notifier:
             url_title = "Open question"
         else:
             message = f"{len(questions)} new questions posted"
-            url = f"http://{exchange_name}.stackexchange.com/questions?sort=newest"
+            url = f"https://{exchange_name}.stackexchange.com/questions?sort=newest"
             url_title = f"Open {exchange_name}.stackexchange.com"
 
         return self.send_to_pushover(f"PushOverflow: {exchange_name}", message, url, url_title)

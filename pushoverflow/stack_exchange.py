@@ -3,8 +3,9 @@ import logging
 
 import requests
 
-STACK_EXCHANGE_BASE_URL = "http://api.stackexchange.com/2.1"
+from pushoverflow import TIMEOUT
 
+STACK_EXCHANGE_BASE_URL = "https://api.stackexchange.com/2.1"
 log = logging.getLogger(__name__)
 
 
@@ -15,7 +16,7 @@ def get_stack_exchange_questions(stack_exchange_site, from_date):
         "fromdate": calendar.timegm(from_date.utctimetuple()),
         "site": stack_exchange_site
     }
-    res = requests.get(stack_url, params=payload)
+    res = requests.get(stack_url, params=payload, timeout=TIMEOUT)
     if res.status_code != requests.codes.ok:
         log.warning("Failed to retrieve from StackExchange: %s", res.text)
         return {}
