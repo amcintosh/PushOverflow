@@ -1,9 +1,9 @@
 # PushOverflow
 
-[![PyPI version](https://badge.fury.io/py/pushoverflow.svg)](http://badge.fury.io/py/pushoverflow)
-[![Build Status](https://travis-ci.org/amcintosh/PushOverflow.svg?branch=master)](https://travis-ci.org/amcintosh/PushOverflow)
-[![codecov.io](http://codecov.io/github/amcintosh/PushOverflow/coverage.svg?branch=master)](http://codecov.io/github/amcintosh/PushOverflow?branch=master)
-[![Codacy Badge](https://api.codacy.com/project/badge/1e7ae95a28774082a66c45a028b0507d)](https://www.codacy.com/app/nacho-vonkickbutt/PushOverflow)
+[![PyPI](https://img.shields.io/pypi/v/pushoverflow)](https://pypi.org/project/pushoverflow/)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pushoverflow)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/amcintosh/pushoverflow/run-tests.yml?branch=main)](https://github.com/amcintosh/pushoverflow/actions?query=workflow%3A%22Run+Tests%22)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/1cd16cda0531412c8cd6eee0c217688a)](https://app.codacy.com/gh/amcintosh/PushOverflow/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 
 Send Pushover notifications of new questions posted to StackExchange
 
