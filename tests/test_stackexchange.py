@@ -4,13 +4,14 @@ import unittest
 from unittest.mock import patch
 
 import httpretty
-from pushoverflow import cli
+
+from pushoverflow.stack_exchange import check_exchange, get_stack_exchange_questions
 
 
 class StackExchangeTests(unittest.TestCase):
 
-    @patch("pushoverflow.cli.filter_questions")
-    @patch("pushoverflow.cli.get_stack_exchange_questions")
+    @patch("pushoverflow.stack_exchange.filter_questions")
+    @patch("pushoverflow.stack_exchange.get_stack_exchange_questions")
     def test_check_exchange(self, get_questions, filter_questions):
         conf = configparser.ConfigParser()
         conf.read_dict({
@@ -22,7 +23,7 @@ class StackExchangeTests(unittest.TestCase):
         now = datetime.datetime.now()
         get_questions.return_value = ["test"]
 
-        cli.check_exchange(conf["stackoverflow"], now)
+        check_exchange(conf["stackoverflow"], now)
 
         get_questions.assert_called_once_with("stackoverflow", now)
         filter_questions.assert_called_once_with(
@@ -30,8 +31,8 @@ class StackExchangeTests(unittest.TestCase):
             ["python", "java"],
             ["logging", "stuff"])
 
-    @patch("pushoverflow.cli.filter_questions")
-    @patch("pushoverflow.cli.get_stack_exchange_questions")
+    @patch("pushoverflow.stack_exchange.filter_questions")
+    @patch("pushoverflow.stack_exchange.get_stack_exchange_questions")
     def test_check_exchange_no_params(self, get_questions, filter_questions):
         conf = configparser.ConfigParser()
         conf.read_dict({
@@ -40,7 +41,7 @@ class StackExchangeTests(unittest.TestCase):
         now = datetime.datetime.now()
         get_questions.return_value = None
 
-        cli.check_exchange(conf["stackoverflow"], now)
+        check_exchange(conf["stackoverflow"], now)
 
         get_questions.assert_called_once_with("stackoverflow", now)
         self.assertFalse(filter_questions.called)
@@ -57,7 +58,7 @@ class StackExchangeTests(unittest.TestCase):
         }
         from_time = datetime.datetime(2015, 8, 25, 15, 26, 0, 0)
 
-        result = cli.get_stack_exchange_questions("stackoverflow", from_time)
+        result = get_stack_exchange_questions("stackoverflow", from_time)
 
         self.assertEqual(result, [{"foo": "bar"}])
         self.assertEqual(httpretty.last_request().method, "GET")
@@ -71,7 +72,6 @@ class StackExchangeTests(unittest.TestCase):
             status=401
         )
 
-        result = cli.get_stack_exchange_questions("stackoverflow",
-                                                  datetime.datetime.now())
+        result = get_stack_exchange_questions("stackoverflow", datetime.datetime.now())
 
         self.assertEqual(result, {})
