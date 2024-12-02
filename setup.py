@@ -26,7 +26,6 @@ setup(
             "pushoverflow=pushoverflow.cli:main"
         ]
     },
-    test_suite="tests",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
