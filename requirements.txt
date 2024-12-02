@@ -1,2 +1,2 @@
-click<=9.0
-requests<=3.0
+click<9.0
+requests<3.0
