@@ -1,5 +1,5 @@
 [Global]
-time_delta_minutes = 60
+check_minutes_back = 60
 
 [Pushover]
 appkey = <your appkey>
@@ -7,7 +7,7 @@ userkey = <your userkey>
 #Priority 0 is normal. -1 will not trigger sound or vibration. 1 will bypass quiet hours.
 priority = 0
 #device name if you want notifications to go to a specific device
-#device = 
+#device =
 
 [stackoverflow]
 #show me new python questions on stackoverflow, but nothing python-2.7

@@ -1,20 +1,26 @@
+import configparser
 import unittest
 
 import httpretty
-from pushoverflow import cli
+
+from pushoverflow.core import Notifier
 
 
 class PushoverTests(unittest.TestCase):
 
     def setUp(self):
-        self.test_config = {
+        self.test_config = configparser.ConfigParser()
+        self.test_config.read_dict({
+            "Global": {
+                "check_minutes_back": 60
+            },
             "Pushover": {
                 "appkey": "APP_KEY",
                 "userkey": "USER_KEY",
                 "priority": 0,
                 "device": "DEVICE"
             }
-        }
+        })
 
     @httpretty.activate
     def test_send_single_question(self):
@@ -29,8 +35,8 @@ class PushoverTests(unittest.TestCase):
         ]
 
         questions = [{"title": "A TITLE", "link": "A_LINK_SOMEWHERE"}]
-        success = cli.send_questions_to_pushover(
-            self.test_config["Pushover"], "TEST", questions)
+        notifier = Notifier(self.test_config)
+        success = notifier.handle_questions("TEST", questions)
 
         self.assertTrue(success)
         self.assertEqual(httpretty.last_request().method, "POST")
@@ -57,8 +63,8 @@ class PushoverTests(unittest.TestCase):
         questions = [{"title": "TITLE 1", "link": "LINK_1"},
                      {"title": "TITLE 2", "link": "LINK_2"}]
         del self.test_config["Pushover"]["device"]
-        success = cli.send_questions_to_pushover(
-            self.test_config["Pushover"], "TEST", questions)
+        notifier = Notifier(self.test_config)
+        success = notifier.handle_questions("TEST", questions)
 
         self.assertTrue(success)
         self.assertEqual(httpretty.last_request().method, "POST")
@@ -75,7 +81,7 @@ class PushoverTests(unittest.TestCase):
             status=400
         )
         questions = [{"title": "A TITLE", "link": "A_LINK_SOMEWHERE"}]
-        success = cli.send_questions_to_pushover(
-            self.test_config["Pushover"], "TEST", questions)
+        notifier = Notifier(self.test_config)
+        success = notifier.handle_questions("TEST", questions)
 
         self.assertFalse(success)
