@@ -1,2 +1,3 @@
 include README.md
+include pushoverflow/VERSION
 include requirements.txt
